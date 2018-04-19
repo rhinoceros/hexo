@@ -1,5 +1,5 @@
 ---
-title: mirror repository between two gitlab instances
+title: mirror repositories between two gitlab instances
 date: 2018-04-19 11:32
 categories: git
 tags: 
@@ -8,7 +8,7 @@ tags:
 - mirror
 ---
 
-# prerequisites
+### prerequisites
 ```
   two gitlab:  gitlab-source.server.url  gitlab-dest.server.url
                group name :  both gitlab instances have op group
@@ -22,7 +22,7 @@ tags:
 ```
   
 
-# create project on gitlab-dest.server.url
+### create project on gitlab-dest.server.url
 
 ``` python
 #!/usr/bin/env python
@@ -53,7 +53,7 @@ for project in projects:
 ``` 
 
 
-# You can create an jenkins job with a step contains below script
+### You can create an jenkins job with a step contains below script
 
 ``` shell
 #!/bin/bash
@@ -72,7 +72,7 @@ git push -f --mirror http://USER:PASSWORD@gitlab-dest.server.url/op/project-scri
 ```
 
 
-# create jenkins job with DSL
+### create jenkins job with DSL
 ``` groovy
 PROJECT_LISTS=['tools-op',
 'project-script',
@@ -120,7 +120,7 @@ job(job_name)  {
 
 
 
-# add hooks to gitlab-project
+### add hooks to gitlab-project
 when 'git@gitlab-source.server.url:op/project-script.git' have push events
 
 ```
