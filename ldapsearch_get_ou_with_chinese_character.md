@@ -1,7 +1,7 @@
 ---
 title: ldapsearch get ou with Chinese character
-date: 2018-04-11 10:01
-categories: backup
+date: 2018-04-20 16:33
+categories: ldap
 tags: 
 - ldapsearch
 - Base64
