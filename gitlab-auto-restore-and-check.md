@@ -45,48 +45,63 @@ pip install --upgrade  python-gitlab
 
 
 ``` python
-
 #!/usr/bin/env python
+''' diff projects on two gitlab server '''
 import sys
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
+import logging
 import gitlab
-gl = gitlab.Gitlab('http://gitlab.server.url', '********************', api_version=4)
-gltest = gitlab.Gitlab('http://gitlabtest.server.url', '********************', api_version=4)
-gl.auth()
-now_utc=datetime.utcnow()
-print 'now_utc %s'%now_utc
-now_utc_ts=float(now_utc.strftime("%s"))
-print 'now_utc_ts %d'%now_utc_ts
-bak_utc=now_utc - timedelta(hours=8)
-bak_utc_ts=float(bak_utc.strftime("%s"))
-def str_to_ts(s):
-    dt_utc=datetime.strptime(s, '%Y-%m-%dT%H:%M:%S.%fZ')
+
+def str_to_ts(str_date):
+    ''' convert string(%Y-%m-%dT%H:%M:%S.%fZ) to float(ts) '''
+    dt_utc = datetime.strptime(str_date, '%Y-%m-%dT%H:%M:%S.%fZ')
     return float(dt_utc.strftime("%s"))
 
-projects = gl.projects.list(all=True)
-for p in projects:
-    ptest=None
-    try:
-        if p.ssh_url_to_repo in ( 'git@gitlab.server.url:ligyj/xxx-web.git', 'git@gitlab.server.url:ymj/xxx-count-server.git') :
+def main():
+    ''' main function '''
+    now_utc = datetime.utcnow()
+    now_utc_ts = float(now_utc.strftime("%s"))
+    logging.info('now_utc: {}, ts: {}'.format(now_utc, now_utc_ts))
+
+    bak_utc = now_utc - timedelta(hours=10)
+    bak_utc_ts = float(bak_utc.strftime("%s"))
+
+    lostproj_repos = []
+    lostcode_repos = []
+
+    projects = GL_PROD.projects.list(all=True)
+    gltest_projects = GL_TEST.projects.list(all=True)
+    gltest_projects_dict = dict((x.id, x) for x in gltest_projects)
+
+    for proj in projects:
+        if proj.last_activity_at == proj.created_at:
             continue
-        ptest=gltest.projects.get(p.id)
-    except Exception as e:
-        print '[Exception] except :p.id is  %d, %s\t%s'%(p.id, p.ssh_url_to_repo, p.last_activity_at)
-        print '[Exception] %s'%str(e)
-    last_act_timestamp = str_to_ts(p.last_activity_at)
-    print p.last_activity_at
-    print last_act_timestamp
-    if last_act_timestamp > bak_utc_ts:
-        print "[INFO] UPDATE code after backup: %s %s > %s" % (p.ssh_url_to_repo,p.last_activity_at,bak_utc)
-        if ptest == None :
-           print "[INFO] NEW repo %s %s > %s"%(p.ssh_url_to_repo,p.last_activity_at,bak_utc)
-    else:
-        if ptest == None :
-            print "[ERROR] LOST repo %s %s"%(p.ssh_url_to_repo,p.last_activity_at)
-            sys.exit(9)
-        elif (p.last_activity_at != ptest.last_activity_at):
-            print "[ERROR] LOST code: %s p(%s) \t=>\t ptest(%s)"%(p.ssh_url_to_repo,p.last_activity_at, ptest.last_activity_at)
-            sys.exit(9)
-        else:
-            pass
+
+        ptest = gltest_projects_dict.get(proj.id, None)
+        last_act_timestamp = str_to_ts(proj.last_activity_at)
+        if last_act_timestamp < bak_utc_ts:
+            if ptest == None:
+                lostproj_repos.append(proj)
+                continue
+            if proj.last_activity_at != ptest.last_activity_at:
+                lostcode_repos.append(proj)
+
+    for proj in lostproj_repos:
+        logging.error("LOST repo: {}    {}"
+                     .format(proj.ssh_url_to_repo, proj.last_activity_at))
+    for proj in lostcode_repos:
+        logging.error("LOST code: {} proj: {}    ptest: {}"
+                     .format(proj.ssh_url_to_repo, proj.last_activity_at,
+                     ptest.last_activity_at))
+    if len(lostproj_repos) > 0 or len(lostcode_repos) > 0:
+        sys.exit(9)
+
+
+PRIVATE_TOKEN = "********************"
+GL_PROD = gitlab.Gitlab('http://prod.server.url', PRIVATE_TOKEN)
+GL_TEST = gitlab.Gitlab('http://test.server.url', PRIVATE_TOKEN)
+
+
+if __name__ == "__main__":
+    main()
 ```
