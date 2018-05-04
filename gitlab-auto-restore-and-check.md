@@ -1,6 +1,6 @@
 ---
 title: compare repo last_activity_at between two gitlab instances
-date: 2018-04-13 11:13
+date: 2018-05-04 17:51
 categories: gitlab
 tags: 
 - gitlab
