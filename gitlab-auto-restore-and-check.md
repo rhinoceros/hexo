@@ -73,6 +73,17 @@ def main():
     gltest_projects = GL_TEST.projects.list(all=True)
     gltest_projects_dict = dict((x.id, x) for x in gltest_projects)
 
+    # disable hook by modify hook's url
+    for project_test in gltest_projects:
+        for hook in project_test.hooks.list():
+            try:
+                hook.url = "http://rhino?url="+hook.url
+                hook.save()
+                print project_test.name
+            except:
+                print "Caught ModifyHooks ERROR IT!"
+
+
     for proj in projects:
         if proj.last_activity_at == proj.created_at:
             continue
