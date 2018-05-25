@@ -4,6 +4,7 @@ date: 2018-05-25 21:01
 categories: shell
 tags: 
 - shell
+- semver
 ---
 
 # shell 练习： 判断变量存在； 正则； 数组；字符串替换； sed 替换文件
