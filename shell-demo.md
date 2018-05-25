@@ -1,7 +1,7 @@
 ---
-title: bak restore with alicloud-duplicity
-date: 2018-04-11 10:01
-categories: backup
+title: shell demo
+date: 2018-05-25 21:01
+categories: shell
 tags: 
 - shell
 ---
