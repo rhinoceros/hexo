@@ -74,3 +74,23 @@ http://archiva-maven-storage-prod.oss-cn-beijing.aliyuncs.com/repository/central
     <artifactId>client</artifactId>
     <version>2.2.1.39-cloud</version>
 ```
+
+
+```
+# run an nexus-server
+mkdir /var/data/tmp-nexus
+chown -R 200  /var/data/tmp-nexus
+docker run -d -p 8081:8081 --name nexus -e MAX_HEAP=768m -v /var/data/tmp-nexus:/sonatype-work sonatype/nexus
+
+
+# generate a new project
+mvn -B archetype:generate   -DarchetypeGroupId=org.apache.maven.archetypes   -DgroupId=com.mycompany.app   -DartifactId=my-app
+
+# config settings.xml and then build
+rm -rf /tmp/.m2/
+mkdir -p /tmp/.m2/
+m2_r=/tmp/.m2/Repository_a   && mkdir -p ${m2_r} && mvn -Dmaven.repo.local=${m2_r} -X -U -B clean compile -gs settings.xml >aliyun.log 2>&1
+m2_r=/tmp/.m2/Repository_142 && mkdir -p ${m2_r} && mvn -Dmaven.repo.local=${m2_r} -X -U -B clean compile -gs settings_2.xml >142.log 2>&1
+m2_r=/tmp/.m2/Repository_a_c && mkdir -p ${m2_r} && mvn -Dmaven.repo.local=${m2_r} -X -U -B clean compile -gs settings.aliyun.central.xml >aliyun.central.log 2>&1
+
+```
