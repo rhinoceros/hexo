@@ -94,3 +94,64 @@ m2_r=/tmp/.m2/Repository_142 && mkdir -p ${m2_r} && mvn -Dmaven.repo.local=${m2_
 m2_r=/tmp/.m2/Repository_a_c && mkdir -p ${m2_r} && mvn -Dmaven.repo.local=${m2_r} -X -U -B clean compile -gs settings.aliyun.central.xml >aliyun.central.log 2>&1
 
 ```
+
+settings.aliyun.central.xml
+``` xml
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" 
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+  <localRepository>/tmp/.m2/Repository</localRepository>
+  <pluginGroups>
+  </pluginGroups>
+
+  <proxies>
+  </proxies>
+
+  <servers>
+  </servers>
+
+  <mirrors>
+    <mirror>
+      <id>Nexus</id>
+      <name>Nexus_Central</name>
+      <url>https://maven.aliyun.com/repository/central</url>
+      <mirrorOf>central</mirrorOf>
+    </mirror>
+  </mirrors>
+
+  <profiles>
+        <profile>
+                <id>xx-profile</id>
+                <activation>
+                        <activeByDefault>true</activeByDefault>
+                </activation>
+                <properties>
+        </properties>
+
+                <repositories>
+                        <repository>
+                                <id>public-repository</id>
+                                <url>https://maven.aliyun.com/repository/central</url>
+                                <releases>
+                                        <enabled>true</enabled>
+                                        <updatePolicy>never</updatePolicy>
+                                </releases>
+                        </repository>
+                </repositories>
+                <pluginRepositories>
+                        <pluginRepository>
+                                <id>public-pluginRepository</id>
+                                <url>https://maven.aliyun.com/repository/central</url>
+                                <releases>
+                                        <enabled>true</enabled>
+                                        <updatePolicy>never</updatePolicy>
+                                </releases>
+                        </pluginRepository>
+                </pluginRepositories>
+        </profile>
+
+  </profiles>
+
+```
