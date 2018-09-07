@@ -1,3 +1,13 @@
+---
+title: BUG, maven.aliyun.com, com.taobao:parent:pom:1.0.3.
+date: 2018-08-31 00:00
+categories: Chanjet
+tags: 
+- maven
+- aliyun
+- taobao
+- parent
+---
 
 add dependency to pom.xml
 ```
