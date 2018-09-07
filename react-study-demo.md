@@ -4,11 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-var x=0;
-var y=0;
-var WINNER=""
-
-function calculateWinner(squares) {
+function calculateWinner(squares,x,y) {
         let count_x=0;
         let count_y=0;
         let count_l=0;
@@ -129,10 +125,11 @@ function Square(props){
           this.state={
               history: [{
                 squares: Array(5).fill().map(() => Array(5).fill(null)),
+                x: 0,
+                y: 0,
+                winner: null
               }],
               stepNumber: 0,
-              x: 0,
-              y: 0,
               xIsNext: true,
           };
       }
@@ -141,42 +138,39 @@ function Square(props){
         const history=this.state.history.slice(0, this.state.stepNumber + 1);
         const current=history[history.length-1];
         const squares = current.squares.slice(0,5).map(s=>s.slice(0,5));
-        x=i;
-        y=j;
         
-        if(WINNER||calculateWinner(squares)||squares[i][j])
+        if(current.winner||squares[i][j])
         {
             return;
         }
         squares[i][j] = this.state.xIsNext?'X':'0';
-
-        
-
-       
+        const winner = calculateWinner(squares,i,j)
         this.setState({
             history: history.concat([{
                 squares: squares,
+                x: i,
+                y: j,
+                winner: winner,
             }]),
             stepNumber: history.length,
             xIsNext:!this.state.xIsNext,
-            x: i,
-            y: j,
+
         });
     }
+
     jumpTo(step) {
         this.setState({
           stepNumber: step,
           xIsNext: (step % 2) === 0,
           x: 0,
           j: 0,
+          winner: null,
         });
       }
     render() {
         const history=this.state.history;
         const current = history[this.state.stepNumber];
-        const winner=calculateWinner(current.squares)
-        
-
+        const winner=current.winner
         const moves = history.map((step, move) => {
             const desc = move ?
               'Go to move #' + move :
@@ -187,11 +181,8 @@ function Square(props){
               </li>
             );
           });
-
-
         let status;
         if(winner){
-            WINNER=winner
             status = "Winner: " + winner;
         }else{
             status = 'Next player: '+(this.state.xIsNext ? 'X' : 'O');
