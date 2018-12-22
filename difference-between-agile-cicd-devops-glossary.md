@@ -1,3 +1,4 @@
+https://www.synopsys.com/blogs/software-security/agile-cicd-devops-glossary/
 
 What’s the difference between Agile, CI/CD, and DevOps?
 Posted by John Steven on March 19, 2018
