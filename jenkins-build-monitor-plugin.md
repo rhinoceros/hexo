@@ -23,11 +23,11 @@ tags:
 ```
     location / {
       set $test 0;
-      if ($http_referer !~ ^localhost:8000/view/CM/view/BM_HSY/$ ) {
+      if ($http_referer !~ ^localhost:8000/view/BM_HSY/$ ) {
           set $test  F;
       }
        
-      if ( $request_uri !~ ^/view/CM/view/BM_HSY/$ ) {
+      if ( $request_uri !~ ^/view/BM_HSY/$ ) {
           set $test  "${test}F";
       }
        
